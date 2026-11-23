@@ -312,7 +312,7 @@ footer button:hover{color:var(--text);border-color:var(--accent)}
       </div>
     <div class="stats">
       <div class="stat reveal"><div class="n">~<span data-count="97">97</span>%</div><div class="l">estimated less manual review in our Morningstar capstone</div></div>
-      <div class="stat off reveal d1"><div class="n"><span data-count="51854" data-comma="1">51,854</span></div><div class="l">utility bills reconciled to the dollar</div></div>
+      <div class="stat off reveal d1"><div class="n"><span data-count="51854" data-comma="1">51,854</span></div><div class="l">electricity bill lines reconciled to the dollar</div></div>
       <div class="stat reveal d2"><div class="n"><span data-count="93">93</span>K</div><div class="l">online shoppers sorted into groups</div></div>
       <div class="stat off reveal d3"><div class="n"><span data-count="90">90</span></div><div class="l">hospitals compared on cost vs. care</div></div>
     </div>
@@ -546,21 +546,32 @@ var PROJECTS = [
   },
   {
     id:'nycha-bills', status:'done', emoji:'⚡', cats:['Data cleanup'],
-    title:'Can you trust 51,854 electricity bills?',
-    name:'NYCHA electricity 2024 data onboarding (work sample)',
-    when:'Nov 2026 · built in Excel',
-    hook:'I turned a raw NYC Housing Authority bill export into a 2024 dataset that ties back to the source.',
-    metrics:[{n:'$186M',l:'across 379 sites'},{n:'1.12B kWh',l:'across 2,366 meters'},{n:'14.6%',l:'of meter reads were estimates'}],
-    q:'Are the totals right, and where are the traps?',
-    a:'After cleanup, yes: they tie back to the source to the dollar. Along the way I flagged 220 bills with no usage and 108 duplicate pairs.',
-    w:'Anyone using these numbers starts from totals that are documented and checked.',
-    twist:'Site names kept changing (122 of them), so totals kept splitting across the same place. One permanent key per site fixed it. Buildings, meet yourselves.',
-    mine:'<b>My part:</b> all of it: data checks, reconciliation, documentation and a one-page memo.',
+    title:'Can you trust a year of NYC public-housing electricity bills?',
+    name:'NYCHA Electricity 2024: Utility Data Onboarding & Reconciliation (work sample)',
+    when:'Nov 2026 · Excel Power Query',
+    hook:'I took a raw NYC Housing Authority bill export (51,854 bill lines) to a clean 2024 dataset that ties back to the source to the dollar.',
+    metrics:[{n:'$186M',l:'across 379 sites'},{n:'1.12B kWh',l:'across 2,366 meters'},{n:'14.6%',l:'of kWh from estimated reads'}],
+    q:'A big customer sends a raw utility export. Are the totals right, and where are the traps?',
+    a:'After cleanup, yes: raw to clean ties to the kWh and the dollar. Along the way I flagged 220 bills charged for energy with no kWh recorded, 108 pairs of bills for the same meter and period, and 149 meters with no real read all year.',
+    w:'Anyone reporting from these numbers starts from totals that are documented, checked and traceable row by row.',
+    steps:['Load and type the raw export','Find the grain: one row = one bill × one meter','Flag each issue with a rule','Clean, with every change logged','Split bills into months by day','Reconcile raw to clean, to the dollar'],
+    twist:'Splitting bills by day barely moved the annual total (+0.34%), but it moved up to 13.2M kWh between months. May was 17.7% higher. Annual reports would never notice; monthly ones would be wrong.',
+    mine:'<b>My part:</b> all of it: data checks, Power Query, reconciliation, decision log and a one-page customer memo.',
     hood:[
-      'Built in Excel with Power Query, PivotTables and SUMIFS, with every data source and step documented.',
-      'Deliverables: reconciled workbook, documented steps, one-page summary memo with findings and open questions.'
+      '51,854 rows: one row per bill × meter (15,873 bills, up to 68 meters each), proven with a Group By before anything else.',
+      'Power Query rebuilds the four main issue flags as custom columns; duplicates come from a Group By merged back with a left join. All four match the source flags on every row.',
+      'A second query splits each bill across the months it covers and prorates kWh and cost by days. Its totals match the Reconciliation.',
+      '122 meters changed site names between bills, so every meter rolls up to one permanent site key.',
+      'Profiled first in Python for speed; the logic a team would refresh lives in Power Query and COUNTIFS / SUMIFS.',
+      'Deliverables: reconciled workbook, issues and decision logs, one-page customer memo with open questions.'
     ],
-    tags:['Excel','Power Query','PivotTables','SUMIFS']
+    tags:['Excel','Power Query','COUNTIFS / SUMIFS','Data reconciliation','Python'],
+    links:[
+      {label:'GitHub', url:'https://github.com/meeetppatel/nycha-electricity-data-onboarding'},
+      {label:'Memo (PDF)', url:'https://github.com/meeetppatel/nycha-electricity-data-onboarding/blob/main/docs/NYCHA_CY2024_customer_memo.pdf'},
+      {label:'Workbook', url:'https://github.com/meeetppatel/nycha-electricity-data-onboarding/raw/main/workbook/NYCHA_electricity_CY2024_work_sample.xlsx'},
+      {label:'Source data', url:'https://catalog.data.gov/dataset/electric-consumption-and-cost-2010-may-2025'}
+    ]
   },
   {
     id:'olist-retail', status:'done', emoji:'🛒', cats:['Data cleanup','Dashboards'],
