@@ -57,13 +57,6 @@ nav a:hover,nav button:hover{color:var(--text)}
 nav a.active{color:var(--text);background:var(--card-b)}
 nav .sep{width:1px;height:18px;background:var(--card-b);margin:0 3px}
 
-/* usage-limit joke banner */
-.limit{position:fixed;top:66px;left:50%;z-index:95;width:min(580px,calc(100vw - 24px));display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--warn) 60%,var(--card-b));background:color-mix(in srgb,var(--warn) 14%,var(--bg2));box-shadow:0 14px 40px rgba(0,0,0,.35);font-size:.88rem;opacity:0;visibility:hidden;transform:translate(-50%,-14px);transition:opacity .3s,transform .3s,visibility .3s}
-.limit.show{opacity:1;visibility:visible;transform:translate(-50%,0)}
-.limit .ic{font-size:1.2rem;flex:none}
-.limit .t{flex:1}
-.limit a{font-weight:600;color:var(--warn);white-space:nowrap}
-.limit button{background:none;border:0;color:var(--muted);cursor:pointer;font-size:1rem;padding:6px 8px;min-width:36px;min-height:36px}
 
 /* hero */
 .hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 90px;position:relative}
@@ -228,7 +221,6 @@ details.hood[open] summary::after{transform:rotate(45deg)}
 footer{padding:28px 0 70px;text-align:center;color:var(--muted);font-size:.82rem}
 footer button{margin-top:14px;font:500 .8rem Inter;padding:9px 16px;border-radius:999px;border:1px dashed var(--card-b);background:none;color:var(--muted);cursor:pointer;min-height:40px}
 footer button:hover{color:var(--text);border-color:var(--accent)}
-#oopsmsg{display:block;min-height:1.4em;margin-top:10px;color:var(--accent)}
 
 /* reveal */
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
@@ -260,7 +252,6 @@ footer button:hover{color:var(--text);border-color:var(--accent)}
   .buddy{bottom:10px;left:10px;font-size:.74rem}
   .contact{padding:40px 16px}
   .tli{padding:18px 16px}
-  .limit{top:60px;font-size:.84rem}
 }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -274,13 +265,6 @@ footer button:hover{color:var(--text);border-color:var(--accent)}
 <div class="bg"><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div></div>
 <div class="cursor" id="cursor"></div>
 <div class="buddy" id="buddy">👋 Hi! Take your time.</div>
-
-<div class="limit" id="limit" role="status" aria-live="polite">
-  <span class="ic">⚠️</span>
-  <span class="t" id="limtxt"></span>
-  <a href="mailto:ptlmeet2783@gmail.com" id="limmail" style="display:none">Email me</a>
-  <button type="button" id="limx" aria-label="Dismiss">✕</button>
-</div>
 
 <nav>
   <a href="#top" class="keep">Meet</a>
@@ -384,7 +368,6 @@ footer button:hover{color:var(--text);border-color:var(--accent)}
         <p class="proof"><b>Where it shows up:</b> the AI step in my NY hospital project only explains failed tests.</p>
       </div>
     </div>
-    <p class="note reveal">Yes, I have hit my usage limit. More than once. There is a button about it in the footer.</p>
   </div>
 </section>
 
@@ -447,8 +430,6 @@ footer button:hover{color:var(--text);border-color:var(--accent)}
 
 <footer>
   <div>© 2026 Meet Patel · Made with HTML, caffeine and a suspicious number of "one more tweak"s.</div>
-  <button id="oops" type="button">Do not press this button</button>
-  <span id="oopsmsg"></span>
 </footer>
 
 <script>
@@ -787,43 +768,6 @@ var PROJECTS = [
   $('#theme').addEventListener('click',function(){
     var n=root.dataset.theme==='dark'?'light':'dark';root.dataset.theme=n;
     try{localStorage.setItem('theme',n)}catch(e){}
-  });
-
-  /* ---------- the footer button: fake usage-limit banner ---------- */
-  var lim=$('#limit'),limtxt=$('#limtxt'),limmail=$('#limmail'),limT1,limT2;
-  function showLimit(){
-    clearTimeout(limT1);clearTimeout(limT2);
-    limmail.style.display='none';
-    limtxt.textContent="You've reached your usage limit. Resets in about 4 hours.";
-    lim.classList.add('show');
-    var finish=function(){
-      limtxt.textContent='Kidding. This site has no limits. Email me?';
-      limmail.style.display='inline';
-      limT2=setTimeout(hideLimit,12000);
-    };
-    if(reduce)finish();else limT1=setTimeout(finish,2400);
-  }
-  function hideLimit(){clearTimeout(limT1);clearTimeout(limT2);lim.classList.remove('show')}
-  $('#limx').addEventListener('click',hideLimit);
-
-  var oops=$('#oops'),msg=$('#oopsmsg'),pressed=0;
-  var quips=['Okay, that one was on you.','Still here? Have a pivot table. 📊','I have nothing left. Go email me.'];
-  oops.addEventListener('click',function(){
-    pressed++;
-    if(pressed===1){showLimit();msg.textContent='Told you.';return}
-    msg.textContent=quips[Math.min(pressed-2,quips.length-1)];
-    if(reduce)return;
-    var em=['🎉','📊','📈','🧮','☕','🧐'];
-    for(var i=0;i<24;i++){
-      (function(){
-        var s=document.createElement('span');
-        s.textContent=em[Math.floor(Math.random()*em.length)];
-        s.style.cssText='position:fixed;top:-30px;left:'+(Math.random()*100)+'vw;font-size:'+(18+Math.random()*18)+'px;z-index:200;pointer-events:none';
-        document.body.appendChild(s);
-        var a=s.animate([{transform:'translateY(0) rotate(0deg)',opacity:1},{transform:'translateY('+(window.innerHeight+60)+'px) rotate('+(Math.random()*540-270)+'deg)',opacity:.9}],{duration:1800+Math.random()*1600,delay:Math.random()*500,easing:'cubic-bezier(.3,.1,.6,1)'});
-        a.onfinish=function(){s.remove()};
-      })();
-    }
   });
 })();
 </script>
